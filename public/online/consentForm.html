@@ -2,6 +2,7 @@
 <body style="background-color: rgba(0, 0, 0, 0.8); color: white ">
     <div id="container" style="width:500px;margin:0 auto; font-size: 24">
             <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+            <script src="jquery-3.3.1.min.js"></script>
             <h1>Research Consent Form</h1>
             <p>Introduction</p>
             <p><a style="color: orange" href="#">The agreement link</a></p>
@@ -10,11 +11,60 @@
                 <input type="radio" name="consent" id="no" value="no"><label for="no">I disagree</label><br><br>
                 <input type="submit" id="submit">
             </section>
+            <div id="response"></div>
     </div>
 
     <script>
-        document.querySelector("#submit").onclick=()=>{
-            alert(document.querySelector("#yes").checked);
+        
+        let username
+        window.Twitch.ext.onAuthorized(function(auth) {
+
+            let userId = auth.userId.slice(1);
+
+            // Needs to move to backend
+            // $.ajax({
+            //     type: "GET",
+            //     headers: {
+            //         'Client-Id': <client ID>,
+            //         'Authorization': "Bearer <Oauth token>"},
+            //     url: "https://api.twitch.tv/helix/users?id=" + userId,
+            //     success: userIdResponse,
+            //     error: userIdErrorResponse
+            // })
+})
+
+        $("#submit").click((e)=>{
+
+            $("#submit").prop("disabled", "true");
+            if($("#yes").is(':checked')){
+
+              
+                $.ajax({
+                type: "POST",
+                url: "https://3dj4lufe2l.execute-api.us-east-2.amazonaws.com/default/BabyBot",
+                data: username,
+                success: submitResponse,
+                error: submitResponse
+
+            })
+
+            }
+        })
+
+        function submitResponse(response){
+            console.log(response)
+
+        }
+
+        function userIdResponse(response){
+
+            username = response.data[0].login;
+        
+        }
+
+        function userIdErrorResponse(response){
+
+            $("#response").text("Error");
         }
     </script>
     
